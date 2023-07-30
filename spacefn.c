@@ -17,32 +17,34 @@ unsigned int key_map(unsigned int code) {
         case KEY_BRIGHTNESSDOWN:    // my magical escape button
             exit(0);
 
-        case KEY_J:
+        case KEY_H:
             return KEY_LEFT;
-        case KEY_K:
+        case KEY_J:
             return KEY_DOWN;
-        case KEY_L:
+        case KEY_K:
             return KEY_UP;
-        case KEY_SEMICOLON:
+        case KEY_L:
             return KEY_RIGHT;
 
-        case KEY_M:
+        case KEY_N:
             return KEY_HOME;
-        case KEY_COMMA:
+        case KEY_M:
             return KEY_PAGEDOWN;
-        case KEY_DOT:
+        case KEY_COMMA:
             return KEY_PAGEUP;
-        case KEY_SLASH:
+        case KEY_DOT:
             return KEY_END;
 
         case KEY_B:
             return KEY_SPACE;
+
     }
     return 0;
 }
 
 // Blacklist keys for which I have a mapping, to try and train myself out of using them
 int blacklist(unsigned int code) {
+    /*
     switch (code) {
         case KEY_UP:
         case KEY_DOWN:
@@ -54,6 +56,7 @@ int blacklist(unsigned int code) {
         case KEY_PAGEDOWN:
             return 1;
     }
+    */
     return 0;
 }
 
@@ -146,6 +149,8 @@ static void state_idle(void) {  // {{{2
     for (;;) {
         while (read_one_key(&ev));
 
+	printf("ev.code=%d\n", ev.code);
+	printf("ev.value=%d\n", ev.value);
         if (ev.code == KEY_SPACE && ev.value == V_PRESS) {
             state = DECIDE;
             return;
@@ -213,12 +218,26 @@ static void state_decide(void) {    // {{{2
 static void state_shift(void) {
     n_buffer = 0;
     struct input_event ev;
+    struct input_event ev1;
     for (;;) {
         while (read_one_key(&ev));
 
+	printf("ev.code=%d, ev.value=%d\n", ev.code, ev.value);
         if (ev.code == KEY_SPACE && ev.value == V_RELEASE) {
+	    printf("shift ev.code=%d, ev.value=%d\n", ev.code, ev.value);
             for (int i=0; i<n_buffer; i++)
                 send_key(buffer[i], V_RELEASE);
+	    // read one more key
+	    
+            printf("read=%d\n",read_one_key(&ev));
+	    printf("read ev.code=%d, ev.value=%d\n", ev.code, ev.value);
+	    printf("imh\n");
+            printf("read2=%d\n",read_one_key(&ev1));
+	    printf("imh2\n");
+	    printf("read2 ev.code=%d, ev.value=%d\n", ev.code, ev.value);
+            //if(read_one_key(&ev))
+                //send_key(ev.code, ev.value);
+	    // read one more key - end
             state = IDLE;
             return;
         }
