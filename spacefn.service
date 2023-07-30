@@ -1,0 +1,8 @@
+[Unit]
+Description=SpaceFn
+
+[Service]
+ExecStart=/home/celio/.local/spacefn-evdev/spacefn /dev/input/event3
+
+[Install]
+WantedBy=multi-user.target
